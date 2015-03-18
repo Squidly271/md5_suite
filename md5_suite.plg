@@ -3,6 +3,7 @@
 <!DOCTYPE PLUGIN [
 
 <!ENTITY author "Squid">
+<!ENTITY name "md5_suite">
 <!ENTITY version "2015.03.18"> 
 <!ENTITY launch "Settings/MD5SUITE"> 
 <!ENTITY pluginURL "https://raw.githubusercontent.com/Squidly271/md5_suite/master/md5_suite.plg">
