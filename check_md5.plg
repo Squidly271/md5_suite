@@ -1,0 +1,29 @@
+<?xml version='1.0' standalone='yes'?>
+
+<!DOCTYPE PLUGIN [
+<!ENTITY name      "MD5_SuUite">
+<!ENTITY author    "squid">
+<!ENTITY version   "2015.03.18">
+]>
+
+<PLUGIN  name="&name;"
+         author="&author;"
+         version="&version;"
+>
+
+
+<!--
+2013-10-19 - first release
+2014-01-24 - Modified for unRAID 6 (64 bit)
+
+The plugin provides ntfs-3g support for unRAID systems.
+
+-->
+
+<FILE NAME="/boot/plugins/check_md5/check_md5.txz">
+<URL>https://github.com/Squidly271/Check_MD5s/raw/master/check_md5.txz</URL>
+</FILE>
+
+</PLUGIN>
+
+

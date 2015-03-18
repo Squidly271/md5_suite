@@ -1,0 +1,119 @@
+Menu="Utilities"
+Title="Check MD5 Files"
+Icon="dynamix.cache.dirs.png"
+---
+<?PHP
+/* Copyright 2014, Bergware International.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ */
+?>
+<?
+$plugin = 'check_md5';
+$cfg = parse_plugin_cfg($plugin);
+
+$sName = "checkmd5.sh";
+$fName = "/boot/my_scripts/$sName";
+$config = "/etc/checkmd5.conf";
+$cache = isset($disks['cache']) ? '/mnt/cache' : '';
+
+exec("find /mnt/disk* $cache -type d -maxdepth 1 -mindepth 1 -exec basename {} \;|uniq|sort -u", $folders);
+?>
+<script>
+$(function() {
+  showStatus('<?=$sName?>');
+  setDropdown();
+  presetCache(document.cache_settings);
+});
+function setDropdown() {
+  var size = Math.max(window.innerHeight-$('#pin').offset().top-150,150);
+  $('#s1').dropdownchecklist({maxDropHeight:size, firstItemChecksAll: true, width:300, explicitClose:'...close'});
+  $('#s2').dropdownchecklist({maxDropHeight:size, firstItemChecksAll: true, width:300, explicitClose:'...close'});
+}
+function prepareCache(form) {
+// Simulate a single input field
+  var exclude = '';
+  for (var i=1,item; item=form.exclude.options[i]; i++) {
+    if (item.selected) {
+      if (exclude.length) exclude += ',';
+      exclude += item.value;
+      item.selected = false;
+    }
+  }
+  item = form.exclude.options[0];
+  item.value = exclude;
+  item.selected = true;
+// Simulate a single input field
+  var include = '';
+  for (var i=1,item; item=form.include.options[i]; i++) {
+    if (item.selected) {
+      if (include.length) include += ',';
+      include += item.value;
+      item.selected = false;
+    }
+  }
+  item = form.include.options[0];
+  item.value = include;
+  item.selected = true;
+}
+function presetCache(form) {
+  var disabled = form.service.value==0;
+  var onOff = disabled ? 'disable' : 'enable';
+  for (var i=0,field; field=form.querySelectorAll('input,select')[i]; i++) field.disabled = (disabled && field.name.substr(0,1)!='#');
+  $("#s1").dropdownchecklist(onOff);
+  $("#s2").dropdownchecklist(onOff);
+  form.service.disabled = false;
+}
+function resetCache(form) {
+  form.other.value = '';
+  setDropdown();
+}
+
+function myLogButton() {
+  openWindow('/usr/bin/tail -n 42 -f /var/log/check_md5.log','Log Information',600,900);
+}
+
+</script>
+<form markdown="1" name="cache_settings" method="POST" action="/plugins/check_md5/check_md5.php" target="progressFrame" onsubmit="prepareCache(this)">
+<input type="hidden" name="#file"    value="<?=$plugin?>/<?=$plugin?>.cfg">
+<input type="hidden" name="#config"  value="<?=$config?>">
+<input type="hidden" name="#prefix"  value="minimum=m&maximum=M&depth=d&exclude=e&include=i">
+
+
+Check MD5 Function:
+: <select name="service" size="1" onchange="presetCache(this.form);">
+  <?=mk_option($cfg['service'], "0", "Disabled")?>
+  <?=mk_option($cfg['service'], "1", "Enabled")?>
+  </select></td>
+
+
+Folder To Check
+: <input id="pin" type="text" name="other" maxlength="200" value="<?=$cfg['other']?>">
+
+Folder name is automatically prefixed with <b> /mnt/ </b>
+
+Examples:
+
+<table>
+<tr><td> </td></tr>
+<tr><td><b>disk1</b></td><td>Checks all MD5 files on <b>disk1</b></td></tr>
+<tr><td><b>disk1/Television</b></td><td>Checks all the MD5 files in the user share <b>Television</b> stored on disk1</td></tr>
+<tr><td><b>user/Movies</b></td><td>Checks all the MD5 files in the user share <b>Movies</b> stored on all the disks</td></tr>
+</table>
+Upon Completion, logs (with analysis) can be accessed on the flash drive at     <b>/boot/config/plugins/check_md5/Logs</b>
+
+Note: Upon pressing <b>Execute</b>, if a check is already in progress, it will be terminated and a new background process will be created to check your files.
+
+To view the progress, reload this page and select <b>View Log</b>
+
+
+
+<button type="button" onclick="myLogButton();">View Log</button>
+: <input type="submit" name="#apply" value="Execute"><button type="button" onclick="done();">Exit</button>
+
+</form>

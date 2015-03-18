@@ -1,0 +1,49 @@
+#!/bin/bash
+
+program=checkmd5.sh
+execute=/usr/local/emhttp/plugins/check_md5/scripts/$program
+pid=$(pidof -s -x $execute)
+LOG=/var/log/check_md5.log
+
+case "$1" in
+'start')
+  if [ -z "$pid" ]; then
+	if [ -e /tmp/checkmd5_abort ]
+	then
+		rm /tmp/checkmd5_abort
+	fi
+
+	/usr/local/emhttp/plugins/check_md5/scripts/startcheck.sh
+
+    echo "$program started"
+  else
+    echo "$program already running!"
+  fi
+;;
+'stop')
+  if [ -n "$pid" ]; then
+	echo "" >> $LOG
+	echo "" >> $LOG
+	echo "****************************" >> $LOG
+	echo "**  User requested abort  **" >> $LOG
+	echo "** Finishing current task **" >> $LOG
+	echo "****************************" >> $LOG
+	echo "" >> $LOG
+
+	echo "STOP" > /tmp/checkmd5_abort
+
+    timer=1000
+    until [ -z "$(pidof -s -x $execute)" ] || [ $timer -eq 0 ]; do
+      timer=$((timer-1))
+      sleep 1
+    done
+    echo "$program stopped"
+  else
+    echo "$program not running!"
+  fi
+;;
+*)
+  echo "Usage: $(basename $0) start|stop"
+esac
+
+
