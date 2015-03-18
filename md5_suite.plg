@@ -1,0 +1,63 @@
+<?xml version='1.0' standalone='yes'?>
+
+<!DOCTYPE PLUGIN [
+
+<!ENTITY author "Squid">
+<!ENTITY version "2015.03.18"> 
+<!ENTITY launch "Settings/MD5SUITE"> 
+<!ENTITY pluginURL "https://raw.githubusercontent.com/Squidly271/md5_suite/master/md5_suite.plg">
+]>
+
+<PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;">
+
+<CHANGES>
+###2015.03.18
+- Initial Test Version
+
+</CHANGES>
+
+<!--
+Copyright 2015, Andrew Zawadzki
+A Set of Utilities for MD5 for unRaid
+-->
+
+<!--
+The 'pre-instal' script
+-->
+
+<FILE Run="/bin/bash">
+<INLINE>
+# Remove old source files
+rm -f $(ls /boot/config/plugins/&name;/&name;*.txz 2>/dev/null|grep -v '&version;')
+</INLINE>
+</FILE>
+
+<!--
+The Source File
+-->
+
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz" Run=upgradepkg --install-new">
+<URL>https://github.com/Squidly271/md5_suite/raw/master/check_md5.txz</URL>
+</FILE>
+
+<!--
+The Post install script
+-->
+
+<FILE Run="/bin/bash">
+<INLINE>
+echo ""
+echo "MD5 Suite has been successfully installed"
+</INLINE>
+</FILE>
+
+<!-- The remove script --> <FILE Run="/bin/bash" Method="remove"> 
+<INLINE>
+rm -rf /boot/config/plugins/&name;
+removepkg &name;
+</INLINE>
+</FILE>
+
+
+</PLUGIN>
+
