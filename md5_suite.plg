@@ -37,7 +37,7 @@ rm -f $(ls /boot/config/plugins/&name;/&name;*.txz 2>/dev/null|grep -v '&version
 The Source File
 -->
 
-<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz" Run=upgradepkg --install-new">
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz" Run="upgradepkg --install-new">
 <URL>https://github.com/Squidly271/md5_suite/raw/master/check_md5.txz</URL>
 </FILE>
 
